@@ -1,0 +1,119 @@
+@keyframes emergence {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+        
+@keyframes disapear {
+    from {opacity: 1;}
+    to {opacity: 0;}
+}
+
+@keyframes slidedin {
+    from {transform: translateY(70%);  }
+    40% {transform: translateY(0%); }
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: hotpink;
+    font-style:italic;
+
+}
+p {
+    font-size: 50px;
+    text-align: center;
+    font-family: courier;
+
+}
+
+.emergence {
+    animation-name: emergence;
+    animation-duration: 4s;
+    animation-fill-mode:both;
+}
+
+.slidein {
+    animation-name: slidedin;
+    animation-duration: 2.5s;
+    animation-fill-mode:both;
+}
+
+.emergence_slidein {
+    animation-name: emergence, slidedin;
+    animation-duration: 4s, 2.5s;
+    animation-fill-mode:both;
+}
+
+
+
+div {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+div.disapear {
+    animation-name: disapear;
+    animation-delay: 17s;
+    animation-duration: 2s;
+    animation-fill-mode:both;
+}
+
+a {
+    font-size:xx-large;
+    font-family: verdana;
+    animation-name: emergence;
+    animation-delay: 19s;
+    animation-duration: 1s;
+    animation-fill-mode:both;
+
+    position: absolute;
+    transform: translate(10%, -100%);
+    top: 99%;
+}
+
+a.back {
+    animation-name: emergence, slidedin;
+    animation-duration: 4s, 2.5s;
+    animation-fill-mode:both;
+    left: 0%;
+}
+a.again {
+    animation-name: emergence, slidedin;
+    animation-duration: 4s, 2.5s;
+    animation-fill-mode:both;
+    left: 95%;
+}
+
+a:hover, a:visited, a:link {
+    text-decoration: none;
+    color:darkblue;
+}
+a:active {
+    text-decoration: none;
+    color:darkslateblue;
+}
+
+a.insta {
+    animation-delay: 21s;
+    font-size:small;
+    top: 100%;
+}
+
+a.insta:hover, a.insta:visited, a.insta:link {
+    text-decoration: none;
+    color:rgb(0, 0, 35)
+}
+a.insta:active {
+    text-decoration: none;
+    color:darkslateblue;
+}
+
+.iphone p {font-size: 40px;}
+
+.iphone a {top: 102%;}
+.iphone a.again {left: 73%;}
+.iphone a.insta {left: 25%; top: 3%;}

@@ -1,0 +1,46 @@
+/* 
+Based on "Typewriter Effect" from CSS-Tricks
+Source: https://css-tricks.com/snippets/css/typewriter-effect/
+License: CC BY-NC-SA 4.0
+Modified by Halva Nyashka
+*/
+
+@import url("beauty.css");
+
+
+.typewriter {
+  
+  animation: emergence 1s both 19s;
+}
+
+.typewriter > p {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  border-right: 3px solid currentColor;
+  padding-right: 3px;
+
+  animation:
+    text-reveal 3s steps(2, end) 19s,
+    caret-blink 0.8s steps(1) 19s infinite;
+}
+
+/* Reveals the text from left to right */
+@keyframes text-reveal {
+  from {
+    max-width: 0;
+  }
+  to {
+    max-width: 100%;
+  }
+}
+
+/* Cursor blink */
+@keyframes caret-blink {
+  0%, 100% {
+    border-color: transparent;
+  }
+  50% {
+    border-color: currentColor;
+  }
+}
