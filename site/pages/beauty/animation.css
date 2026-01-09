@@ -1,0 +1,32 @@
+@keyframes emergence {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+        
+@keyframes disapear {
+    from {opacity: 1;}
+    to {opacity: 0;}
+}
+
+@keyframes slidedin {
+    from {transform: translateY(70%);  }
+    40% {transform: translateY(0%); }
+}
+
+.emergence {
+    animation-name: emergence;
+    animation-duration: 4s;
+    animation-fill-mode:both;
+}
+
+.slidein {
+    animation-name: slidedin;
+    animation-duration: 2.5s;
+    animation-fill-mode:both;
+}
+
+.emergence_slidein {
+    animation-name: emergence, slidedin;
+    animation-duration: 4s, 2.5s;
+    animation-fill-mode:both;
+}
