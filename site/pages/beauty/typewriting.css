@@ -1,21 +1,25 @@
 @import url("beauty.css");
 
+:root {
+  --emergence-delay: 15s;
+  --right-shift: 3px;
+}
 
 .typewriter {
   
-  animation: emergence 1s both 19s;
+  animation: emergence 1s both var(--emergence-delay);
 }
 
 .typewriter > p {
   display: inline-block;
   overflow: hidden;
   vertical-align: bottom;
-  border-right: 3px solid currentColor;
-  padding-right: 3px;
+  border-right: var(--right-shift) solid currentColor;
+  padding-right: var(--right-shift);
 
   animation:
-    text-reveal 3s steps(2, end) 19s,
-    caret-blink 0.8s steps(1) 19s infinite;
+    text-reveal 3s steps(2, end) var(--emergence-delay),
+    caret-blink 0.8s steps(1) var(--emergence-delay) infinite;
 }
 
 /* Reveals the text from left to right */

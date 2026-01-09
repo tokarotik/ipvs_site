@@ -14,27 +14,42 @@ class MimeTypes(Enum):
     
     
 app = Flask(__name__)
-#rootdir = os.getcwd().replace('\\', '/') + '/'
+rootdir = os.getcwd().replace('\\', '/') + '/'
 github_url = "https://raw.githubusercontent.com/tokarotik/ipvs_site/refs/heads/main/"
 
-def get_source_file(path: str, mimetype: MimeTypes):
-    url = github_url + path
-    
-    try:
-        req = requests.get(url)
-    except Exception as e:
-        print(f"Error fetching {url}: {e}")
-        return '', 500
-    
-    if req.status_code == 200:
-        return req.text, 200, {'Content-Type': mimetype.value + ' charset=utf-8'}
-    if req.status_code == 404:
-        print(f"Not found {url}")
-        return '', 404
-    else:
-        print(f"Error fetching {url}: Status code {req.status_code}")
-        return '', 500  
-    
+if 'home' in rootdir:
+    def get_source_file(path: str, mimetype: MimeTypes):
+        url = github_url + path
+        
+        try:
+            req = requests.get(url)
+        except Exception as e:
+            print(f"Error fetching {url}: {e}")
+            return '', 500
+        
+        if req.status_code == 200:
+            return req.text, 200, {'Content-Type': mimetype.value + ' charset=utf-8'}
+        if req.status_code == 404:
+            print(f"Not found {url}")
+            return '', 404
+        else:
+            print(f"Error fetching {url}: Status code {req.status_code}")
+            return '', 500  
+
+else:
+    def get_source_file(path: str, mimetype: MimeTypes):
+        full_path = os.path.join(os.path.dirname(__file__), path)
+        
+        try:
+            with open(full_path, 'r', encoding='utf-8') as file:
+                content = file.read()
+            return content, 200, {'Content-Type': mimetype.value + ' charset=utf-8'}
+        except FileNotFoundError:
+            print(f"File not found: {full_path}")
+            return '', 404
+        except Exception as e:
+            print(f"Error reading file {full_path}: {e}")
+            return '', 500
     
 
 @app.route("/")
