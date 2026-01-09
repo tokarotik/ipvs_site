@@ -4,17 +4,21 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    
     background-color: hotpink;
     font-style:italic;
 
 }
+
 p {
     font-size: 50px;
     text-align: center;
     font-family: courier;
 
+    
+    
 }
+
 
 div {
     position: absolute;
@@ -27,6 +31,7 @@ div.disapear {
     animation-delay: 14s;
     animation-duration: 2s;
     animation-fill-mode:both;
+    width: 100vw;
 }
 
 /* Mobile adjustments */
