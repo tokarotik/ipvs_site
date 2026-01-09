@@ -112,8 +112,8 @@ a.insta:active {
     color:darkslateblue;
 }
 
-.iphone p {font-size: 40px;}
+.mobile p {font-size: 40px;}
 
-.iphone a {top: 102%;}
-.iphone a.again {left: 73%;}
-.iphone a.insta {left: 25%; top: 3%;}
+.webkit a {top: 102%;}
+.webkit a.again {left: 73%;}
+.webkit a.insta {left: 25%; top: 3%;}
