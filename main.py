@@ -1,22 +1,55 @@
 import os
-from flask import Flask, send_from_directory, send_file
+import requests
 
+from enum import Enum
+from flask import Flask
+
+
+class MimeTypes(Enum):
+    TEXT = "text/plain;"
+    HTML = "text/html;"
+    CSS = "text/css;"
+    JS = "application/javascript;"
+    JSON = "application/json;"
+    
+    
 app = Flask(__name__)
-rootdir = os.getcwd().replace('\\', '/') + '/'
+#rootdir = os.getcwd().replace('\\', '/') + '/'
+github_url = "https://raw.githubusercontent.com/tokarotik/ipvs_site/refs/heads/main/"
+
+def get_source_file(path: str, mimetype: MimeTypes):
+    url = github_url + path
+    
+    try:
+        req = requests.get(url)
+    except Exception as e:
+        print(f"Error fetching {url}: {e}")
+        return '', 500
+    
+    if req.status_code == 200:
+        return req.text, 200, {'Content-Type': mimetype.value + ' charset=utf-8'}
+    if req.status_code == 404:
+        print(f"Not found {url}")
+        return '', 404
+    else:
+        print(f"Error fetching {url}: Status code {req.status_code}")
+        return '', 500  
+    
+    
 
 @app.route("/")
 def home():
-    return open(rootdir +"site/index.html", encoding="utf-8").read()
+    return get_source_file("site/index.html", MimeTypes.HTML)
 
 @app.route("/license")
 def license():
-    return f"<pre>{ open(rootdir + 'LICENSE.txt', encoding='utf-8').read() }</pre>"
+    return get_source_file("site/LICENSE.txt", MimeTypes.TEXT)
 
 @app.route("/<namepage>")
 def page(namepage=None):
     if namepage is None: return home()
     try:
-        return open(rootdir + f"site/pages/{namepage}.html", encoding="utf-8").read()
+        return get_source_file(f"site/pages/{namepage}.html", MimeTypes.HTML)
     except FileNotFoundError:
         return page_not_found(404)
     except Exception:
@@ -26,7 +59,7 @@ def page(namepage=None):
 def scripts(namepage=None):
     if namepage is None: return page_not_found(404)
     try:
-        return open(rootdir + f"site/scripts/{namepage}", encoding="utf-8").read()
+        return get_source_file(f"site/scripts/{namepage}", MimeTypes.JS)
     except FileNotFoundError:
         return page_not_found(404)
     except Exception:
@@ -42,8 +75,10 @@ def styles(namepage=None, sheet=None):
     if namepage is None: return page_not_found(404)
     if sheet is None:
         sheet = namepage
+    namepage = namepage.replace('.css', '')
     try:
-        return send_from_directory(rootdir + f"site/pages/{namepage.replace('.css', '')}", sheet)
+        return get_source_file(f"site/pages/{namepage}/{sheet}", MimeTypes.CSS)
+    
     except FileNotFoundError:
         return page_not_found(404)
     except Exception:
@@ -51,7 +86,6 @@ def styles(namepage=None, sheet=None):
     
 @app.errorhandler(404)
 def page_not_found(e):
-    return open(rootdir + "site/404.html", encoding="utf-8").read(), 404
-
+    return get_source_file("site/404.html", MimeTypes.HTML)
 
 app.run(host="::", port=8000)
