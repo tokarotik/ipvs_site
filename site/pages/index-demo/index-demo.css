@@ -1,0 +1,14 @@
+body {
+    
+    background-image: linear-gradient(to bottom,   violet, orchid,  deeppink, darkmagenta);    
+    height: calc(98.5vh * 2);
+}
+
+.mobile body{
+    background-color: rgb(0, 0, 43);
+    height: calc(92.7vh * 2);
+}
+
+
+
+
