@@ -9,8 +9,9 @@ a {
     animation-fill-mode:both;
 
     position: absolute;
-    transform: translate(10%, -100%);
-    top: 99%;
+    bottom: 0;
+    /*transform: translateY(-25%);*/
+    /*transform: translate(10%, -100%);*/
 }
 
 a:hover, a:visited, a:link {
@@ -27,20 +28,23 @@ a.back {
     animation-name: emergence, slidedin;
     animation-duration: 4s, 2.5s;
     animation-fill-mode:both;
-    left: 0%;
+    left: 0;
+    /*left: 0%;*/
 }
 a.again{
     animation-name: emergence, slidedin;
     animation-duration: 4s, 2.5s;
     animation-fill-mode:both;
-    left: 95%;
+    right: 0;
+    /*left: 95%;*/
 }
 
 /* Instagram button */
 a.insta {
     animation-delay: 17s;
     font-size:small;
-    top: 100%;
+    
+    /*top: 100%;*/
 }
 /* Instagram button colors */
 a.insta:hover, a.insta:visited, a.insta:link {
@@ -53,6 +57,4 @@ a.insta:active {
 }
 
 /* Mobile adjustments */
-.mobile a {top: 100%;}
-.webkit a.again {left: 73%;}
-.webkit a.insta {left: 25%; top: 3%;}
+.mobile a.insta {bottom: auto;}
