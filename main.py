@@ -38,7 +38,7 @@ if 'home' in rootdir:
             if work_text_func != None:
                 content = work_text_func(content)
             
-            return req.text, 200, {'Content-Type': mimetype.value + charset}
+            return content, 200, {'Content-Type': mimetype.value + charset}
         if req.status_code == 404:
             print(f"Not found {url}")
             return '', 404
