@@ -165,6 +165,10 @@ def assets(namepage: str, nameassests: str):
     except Exception:
         return "000", 500  
 
+@app.route('/favicon.ico')
+def favicon():
+    return '', 204
+
 @app.errorhandler(404)
 def page_not_found(e = 404):
     return get_source_file("site/404.html", MimeTypes.HTML)
