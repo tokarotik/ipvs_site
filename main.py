@@ -20,7 +20,6 @@ rootdir = os.getcwd().replace('\\', '/') + '/'
 github_url = "https://raw.githubusercontent.com/tokarotik/ipvs_site/refs/heads/main/"
 
 is_deploy = 'home' in rootdir
-#is_deploy = True
 
 if is_deploy:
     def get_source_file(path: str, mimetype: MimeTypes, work_text_func = None):
