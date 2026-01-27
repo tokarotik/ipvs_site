@@ -2,7 +2,7 @@ import os
 import requests
 
 from enum import Enum
-from flask import Flask, send_from_directory
+from flask import Flask, send_from_directory, Response, stream_with_context
 
 
 class MimeTypes(Enum):
@@ -19,7 +19,10 @@ app = Flask(__name__, static_folder='site\pages')
 rootdir = os.getcwd().replace('\\', '/') + '/'
 github_url = "https://raw.githubusercontent.com/tokarotik/ipvs_site/refs/heads/main/"
 
-if 'home' in rootdir:
+is_deploy = 'home' in rootdir
+is_deploy = True
+
+if is_deploy:
     def get_source_file(path: str, mimetype: MimeTypes, work_text_func = None):
         url = github_url + path
         
@@ -38,7 +41,24 @@ if 'home' in rootdir:
             if work_text_func != None:
                 content = work_text_func(content)
             
-            return content, 200, {'Content-Type': mimetype.value + charset}
+            def generate(req):
+                for chunk in req.iter_content(chunk_size=8192):
+                    if chunk:
+                        if work_text_func != None:
+                            yield work_text_func(chunk.decode()).encode()
+                        else:
+                            yield chunk
+            
+            return Response(
+                stream_with_context(generate(req)),
+                    headers={
+                        "Content-Type": mimetype
+                    }
+                    
+            )
+        
+        
+        #content, 200, {'Content-Type': mimetype.value + charset}
         if req.status_code == 404:
             print(f"Not found {url}")
             return '', 404
