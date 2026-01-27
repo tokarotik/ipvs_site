@@ -21,6 +21,8 @@ github_url = "https://raw.githubusercontent.com/tokarotik/ipvs_site/refs/heads/m
 
 is_deploy = 'home' in rootdir
 
+print("is deploy: ?", is_deploy)
+
 if is_deploy:
     def get_source_file(path: str, mimetype: MimeTypes, work_text_func = None):
         url = github_url + path
@@ -108,23 +110,11 @@ def get_mimetype(filename):
 def home():
     return get_source_file("site/index.html", MimeTypes.HTML)
 
+@app.route("/games/<game>/")
 @app.route("/assets-games/<game>/")
 @app.route("/assets-games/<game>/<path:filename>")
 def games_assets(game = None, filename = None):
-    if game == None: return page_not_found()
-    is_first_page = filename == None
-    if is_first_page: filename = 'index.html'
-    
-    return get_source_file("site/games/"+ str(game) +"/"+ filename, get_mimetype(filename))
-
-@app.route("/games/<game>/")
-def games(game=None):
-    if game == None: return page_not_found()
-    return get_source_file(
-        "site/games/template.html", 
-        MimeTypes.HTML, 
-        lambda x: x.replace("{{ game_name }}", game)
-    )
+    return "<p>Games are no longer avaible</p><p>Games pages deleted</p><p><a href=\"/\">Back to Main page</a></p>"
 
     
 @app.route("/license")
@@ -173,16 +163,8 @@ def styles(namepage=None, sheet=None):
         return "000", 500
 
 @app.route("/assets/<namepage>/<nameassets>")
-def assets(namepage: str, nameassests: str):
-    if namepage is None: return page_not_found()
-    if nameassests is None: return page_not_found()
-    try:
-        return send_from_directory("size/pages/" + namepage, nameassests)
-    
-    except FileNotFoundError:
-        return page_not_found()
-    except Exception:
-        return "000", 500  
+def assets(namepage: str, nameassets: str):
+    return "<p>Assets are no longer avaible cause these was made for games</p><p>Games are no longer avaible</p><p>Games pages deleted</p><p><a href=\"/\">Back to Main page</a></p>"
 
 @app.route('/favicon.ico')
 def favicon():

@@ -5,9 +5,18 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Main Page</title>
         <style>
+            a {
+                text-decoration: none;
+            }
+
             a:visited {
                 color: blue;
             }
+            .notavaible {
+                color: red;
+                display: inline;
+            }
+
         </style>
     </head>
     <body>
@@ -17,12 +26,6 @@
         </p>
         <a href="/beauty">Go to Beauty Page</a>
         <p><a href="/index-demo">Go to Index Demo</a></p>
-        
-        <p>Games:
-            <p>    -> <a href="/games/bacts-sim">Bacts Sim</a></p>
-                -> <a href="/games/vszombie">VSZombie</a>
-        </p>
-
 
         <p>
             Some fun facts about this site:
@@ -38,7 +41,7 @@
                     </script>
                 <li>
                     The first version of this site was created and published on
-                    <a href="https://www.pythonanywhere.com">PythonAnyWhere</a>
+                    <a href="https://www.pythonanywhere.com" target="_blank">PythonAnyWhere</a>
                     on 7th of January, 2026 in evening.
                     If the
                     <a href="https://googawooga.pythonanywhere.com">link</a>
@@ -71,9 +74,25 @@
                 </li>
                 <li>
                     In 26 of January 2026, had added some games: 
-                    <a href="/games/bacts-sim">Bacts Sim</a> and 
-                    <a href="/games/vszombie">VSZombie</a>
-                    . These are old author's projects.
+
+                    <!--
+                        /games/bacts-sim
+                        /games/vszombie
+                    -->
+
+                    <div class="notavaible">Bacts Sim</div>
+                     and 
+                    <div class="notavaible">VSZombie</div>.
+                    These are old author's 
+                    <a href="https://godotengine.org/" target="_blank">Godot Engine</a>
+                     v3.5.1 projects.
+                </li>
+                <li>
+                    In 27 of January 2026, had deleted access for the games
+                    (but the files of games is still contain on the repo)
+                    cause of author can't to make fast game's files uploading to the user browser
+                    (by easier language can't to make faster loading of a game).
+                    
                 </li>
             </ul>
         </p>
