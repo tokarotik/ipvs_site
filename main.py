@@ -62,7 +62,7 @@ if is_deploy:
         #content, 200, {'Content-Type': mimetype.value + charset}
         if req.status_code == 404:
             print(f"Not found {url}")
-            return '', 404
+            return page_not_found()
         else:
             print(f"Error fetching {url}: Status code {req.status_code}")
             return '', 500  
@@ -119,7 +119,7 @@ def games_assets(game = None, filename = None):
     
 @app.route("/license")
 def license():
-    return get_source_file("site/LICENSE.txt", MimeTypes.TEXT)
+    return get_source_file("LICENSE.txt", MimeTypes.TEXT)
 
 @app.route("/<namepage>")
 def page(namepage=None):
@@ -170,8 +170,11 @@ def assets(namepage: str, nameassets: str):
 def favicon():
     return '', 204
 
-@app.errorhandler(404)
-def page_not_found(e = 404):
+def page_not_found():
     return get_source_file("site/404.html", MimeTypes.HTML)
+
+@app.errorhandler(404)
+def _page_not_found(e):
+    return page_not_found()
 
 app.run(host="::", port=8000)
