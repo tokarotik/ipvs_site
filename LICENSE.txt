@@ -3,12 +3,12 @@ Creative Commons Attribution 2.5 Generic (CC BY 2.5)
 Copyright (c) 2026 Halva Nyashka
 
 You are free:
-- to Share — to copy, distribute, display, and perform the work
-- to Remix — to make derivative works
+- to Share - to copy, distribute, display, and perform the work
+- to Remix - to make derivative works
 - to make commercial use of the work
 
 Under the following conditions:
-- Attribution — You must give appropriate credit, provide a link to the
+- Attribution - You must give appropriate credit, provide a link to the
   license, and indicate if changes were made.
 
 Full license text:
