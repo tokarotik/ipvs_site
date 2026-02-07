@@ -2,7 +2,7 @@ import os
 import requests
 
 from enum import Enum
-from flask import Flask, send_from_directory, Response, stream_with_context
+from flask import Flask, redirect, Response, stream_with_context
 
 
 class MimeTypes(Enum):
@@ -53,7 +53,9 @@ if is_deploy:
             return Response(
                 stream_with_context(generate(req)),
                     headers={
-                        "Content-Type": mimetype
+                        "Content-Type": mimetype.value + charset,
+                        "Cross-Origin-Opener-Policy": "same-origin", 
+                        "Cross-Origin-Embedder-Policy": "require-corp"
                     }
                     
             )
@@ -86,7 +88,7 @@ else:
              
             with open(full_path, 'rb') as file:
                 content = file.read()
-            return content, 200, {'Content-Type': mimetype.value} 
+            return content, 200, {'Content-Type': mimetype.value, "Cross-Origin-Opener-Policy": "cross-origin", "Cross-Origin-Embedder-Policy": "require-corp"} 
             
         except FileNotFoundError:
             print(f"File not found: {full_path}")
@@ -111,10 +113,13 @@ def home():
     return get_source_file("site/index.html", MimeTypes.HTML)
 
 @app.route("/games/<game>/")
+def games(game, subpath="index.html"):
+    return redirect(f"https://tokarotik.github.io/site/games/{game}/index.html"), 302
+    
 @app.route("/assets-games/<game>/")
 @app.route("/assets-games/<game>/<path:filename>")
 def games_assets(game = None, filename = None):
-    return "<p>Games are no longer avaible</p><p>Games pages deleted</p><p><a href=\"/\">Back to Main page</a></p>"
+    return "<p>Games are no longer avaible</p><p>Games pages deleted</p><p><a href=\"/\">Back to Main page</a></p>", 404
 
     
 @app.route("/license")
@@ -126,6 +131,7 @@ def page(namepage=None):
     if namepage is None: return home()
     try:
         return get_source_file(f"site/pages/{namepage}.html", MimeTypes.HTML)
+    
     except FileNotFoundError:
         return page_not_found(404)
     except Exception:
