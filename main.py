@@ -1,6 +1,7 @@
-import os
 import requests
 
+from os import getcwd
+from os.path import join, dirname
 from enum import Enum
 from flask import Flask, redirect, Response, stream_with_context
 
@@ -16,7 +17,7 @@ class MimeTypes(Enum):
     PNG = "image/png"
     
 app = Flask(__name__)
-rootdir = os.getcwd().replace('\\', '/') + '/'
+rootdir = getcwd().replace('\\', '/') + '/'
 github_url = "https://raw.githubusercontent.com/tokarotik/ipvs_site/refs/heads/main/"
 
 is_deploy = 'home' in rootdir
@@ -71,7 +72,7 @@ if is_deploy:
 
 else:
     def get_source_file(path: str, mimetype: MimeTypes, work_text_func = None):
-        full_path = os.path.join(os.path.dirname(__file__), path)
+        full_path = path.join(path.dirname(__file__), path)
         
         charset = ' charset=utf-8'
         if mimetype in [MimeTypes.BIN, MimeTypes.PNG, MimeTypes.WASM]:
