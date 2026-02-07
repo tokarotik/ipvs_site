@@ -1,4 +1,5 @@
 
+import os
 import types
 import requests
 import importlib
@@ -15,7 +16,10 @@ ALLOWED_IMPORTS: dict = {
     }
 }
 
+is_deploy = False
 app: Flask = None
+
+print(f"Launcer deploy ?", is_deploy)
 
 def restricted_import(name, globals=None, locals=None, fromlist=(), level=0):
     # 1️⃣ Allow full module imports
@@ -53,22 +57,46 @@ def return_error(message):
     return app
 
 def handle_code_request(CODE_REQUEST):
+    if not is_deploy:
+        print("--- Launcher warning ---")
+        print("Running in development mode. Code will be loaded from local file, not from GitHub.")
+        return open("main.py", "r", encoding="utf-8").read()
+    
     if CODE_REQUEST.status_code != 200:
-        raise Exception(f"Failed to fetch code: {CODE_REQUEST.status_code}")
+        try:
+            file_saves = open("last-server-code.py", "r", encoding="utf-8")
+            text = file_saves.read()
+            file_saves.close()
+            
+            print("--- Launcher warning ---")
+            print("Failed to fetch code from GitHub, but found last saved code. Using it.")
+            return text
+            
+        except Exception as e:
+            raise Exception(f"Failed to fetch code: {CODE_REQUEST.status_code}")
     
-    return CODE_REQUEST.text
+    text = CODE_REQUEST.text
     
+    file_saves = open("last-server-code.py", "w", encoding="utf-8")
+    file_saves.write(text)
+    file_saves.close()
+    
+    return text
 
 CODE_REQUEST = requests.get(URL)
 CODE = None
 try:
+    print(f"Fetching code from {URL}...")
     CODE = handle_code_request(CODE_REQUEST)
 except Exception as e:
     app = return_error(f"Error fetching code: {e}")
 
 if app is None:
     try:
-        exec(CODE, {"__builtins__": {"__import__": restricted_import}})
+        print("--- Launcher warning ---")
+        print("Code will start withound restricted imports. Be careful, because it can be unsafe!")
+        print()
+        exec(CODE, globals=app)
     except Exception as e:
         app = return_error(f"Error executing code: {e}")
     

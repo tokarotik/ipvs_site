@@ -72,7 +72,7 @@ if is_deploy:
 
 else:
     def get_source_file(path: str, mimetype: MimeTypes, work_text_func = None):
-        full_path = path.join(path.dirname(__file__), path)
+        full_path = join(dirname(__file__), path)
         
         charset = ' charset=utf-8'
         if mimetype in [MimeTypes.BIN, MimeTypes.PNG, MimeTypes.WASM]:
