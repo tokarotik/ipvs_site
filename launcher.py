@@ -3,105 +3,109 @@ import os
 import types
 import requests
 import importlib
-from flask import Flask
+import traceback
+from flask import Flask, request
 
 URL: str = "https://github.com/tokarotik/ipvs_site/raw/refs/heads/main/main.py"
-ALLOWED_IMPORTS: dict = {
-    "modules": ["requests"],
-    "functions": {
-        "os.path": ["join", "dirname"],
-        "os": ["getcwd"],
-        "enum": ["Enum"],
-        "flask": ["Flask", "redirect", "Response", "stream_with_context"]
-    }
-}
+LOCAL_CODE_FILE: str = ".last-server-code.py"
+is_deploy = True
 
-is_deploy = False
-app: Flask = None
+APP_NAME = "ipvs_site_launcher"
+APP_NAME_ERROR = "ipvs_site_launcher_error"
 
-print(f"Launcer deploy ?", is_deploy)
+app: Flask = Flask(__name__)
+is_error = False
 
-def restricted_import(name, globals=None, locals=None, fromlist=(), level=0):
-    # 1️⃣ Allow full module imports
-    if name in ALLOWED_IMPORTS["modules"]:
-        return importlib.import_module(name)
+def _log(*message, type="log"):
+    print(f"--- Launcher {type} ---", end = " " if type == 'log' else "\n")
+    print(' '.join(map(str, message)))
+    if type != "log":
+        print()
 
-    # 2️⃣ Allow function/class-level imports
-    if name in ALLOWED_IMPORTS["functions"]:
-        allowed_attrs = set(ALLOWED_IMPORTS["functions"][name])
-        real_module = importlib.import_module(name)
+def log(*message):
+    _log(*message)
+def warning(*message):
+    _log(*message, type="warning")
+def error(*message):
+    _log(*message, type="error")
 
-        # No fromlist: block access to full module
-        if not fromlist:
-            raise ImportError(f"Direct import of '{name}' is blocked")
 
-        proxy = types.SimpleNamespace()
-
-        for attr in fromlist:
-            if attr not in allowed_attrs:
-                raise ImportError(f"{attr} not allowed from {name}")
-            setattr(proxy, attr, getattr(real_module, attr))
-
-        return proxy
-
-    raise ImportError(f"Import of '{name}' is blocked")
+log(f"Launcer deploy ?", is_deploy)
 
 def return_error(message):
-    print("--- Launcher error ---")
-    print(f"Can't to start launcher!\n Error: {message}")
+    global app
     
     app = Flask(__name__)
+    
+    error(f"Can't to start launcher!\n Error: {message}")
+    print(traceback.format_exc())
+    is_error = True
+    
     @app.route("/")
-    def error():
+    def index():
         return f"<h1>Oops... Error in launcher of site!</h1><p>{message}</p>", 500
-    return app
+
+
+def read_local_code():
+    file_saves = open(LOCAL_CODE_FILE, "r", encoding="utf-8")
+    text = file_saves.read()
+    file_saves.close()
+    return text
+
+def save_local_code(text):
+    file_saves = open(LOCAL_CODE_FILE, "w", encoding="utf-8")
+    file_saves.write(text)
+    file_saves.close()
+
 
 def handle_code_request(CODE_REQUEST):
     if not is_deploy:
-        print("--- Launcher warning ---")
-        print("Running in development mode. Code will be loaded from local file, not from GitHub.")
+        warning("Running in development mode. Code will be loaded from local file, not from GitHub.")
         return open("main.py", "r", encoding="utf-8").read()
     
     if CODE_REQUEST.status_code != 200:
         try:
-            file_saves = open("last-server-code.py", "r", encoding="utf-8")
-            text = file_saves.read()
-            file_saves.close()
-            
-            print("--- Launcher warning ---")
-            print("Failed to fetch code from GitHub, but found last saved code. Using it.")
-            return text
+            warning("Failed to fetch code from GitHub, but found last saved code. Using it.")
+            return read_local_code()
             
         except Exception as e:
             raise Exception(f"Failed to fetch code: {CODE_REQUEST.status_code}")
     
     text = CODE_REQUEST.text
-    
-    file_saves = open("last-server-code.py", "w", encoding="utf-8")
-    file_saves.write(text)
-    file_saves.close()
+    save_local_code(text)
     
     return text
 
 CODE_REQUEST = requests.get(URL)
 CODE = None
 try:
-    print(f"Fetching code from {URL}...")
+    log(f"Fetching code from {URL}...")
     CODE = handle_code_request(CODE_REQUEST)
 except Exception as e:
-    app = return_error(f"Error fetching code: {e}")
+    return_error(f"Error fetching code: {e}")
 
-if app is None:
+if not is_error:
     try:
-        print("--- Launcher warning ---")
-        print("Code will start withound restricted imports. Be careful, because it can be unsafe!")
-        print()
-        exec(CODE, globals=app)
-    except Exception as e:
-        app = return_error(f"Error executing code: {e}")
-    
+        warning("Code will start without restricted imports. Be careful, because it can be unsafe! (hard-coded)")
 
-print("done")
+        
+        #env = {"app": app}
+        env = {"app": app, "__builtins__": __builtins__}
+        exec(CODE, env)
+        
+        app = env.get("app")
+        if app is None:
+            return_error("'app' variable not found")
+        
+    except Exception as e:
+        return_error(f"Error executing code: {e}")
+        
+    print("done")
+else:
+    print("error")
+
+
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    log("Is deploy debug ? ", is_deploy)
+    app.run(debug=not is_deploy)

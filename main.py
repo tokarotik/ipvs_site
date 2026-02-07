@@ -16,7 +16,6 @@ class MimeTypes(Enum):
     BIN = "application/octet-stream"
     PNG = "image/png"
     
-app = Flask(__name__)
 rootdir = getcwd().replace('\\', '/') + '/'
 github_url = "https://raw.githubusercontent.com/tokarotik/ipvs_site/refs/heads/main/"
 
@@ -72,7 +71,7 @@ if is_deploy:
 
 else:
     def get_source_file(path: str, mimetype: MimeTypes, work_text_func = None):
-        full_path = join(dirname(__file__), path)
+        full_path = join(dirname(__name__), path)
         
         charset = ' charset=utf-8'
         if mimetype in [MimeTypes.BIN, MimeTypes.PNG, MimeTypes.WASM]:
@@ -184,4 +183,3 @@ def page_not_found():
 def _page_not_found(e):
     return page_not_found()
 
-app.run(host="::", port=8000)
