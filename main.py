@@ -1,6 +1,6 @@
 import requests
 
-from os import getcwd
+from os import getcwd, environ
 from os.path import join, dirname
 from enum import Enum
 from flask import Flask, redirect, Response, stream_with_context
@@ -17,11 +17,22 @@ class MimeTypes(Enum):
     PNG = "image/png"
     
 rootdir = getcwd().replace('\\', '/') + '/'
-github_url = "https://raw.githubusercontent.com/tokarotik/ipvs_site/refs/heads/main/"
+github_url = "https://raw.githubusercontent.com/tokarotik/tokarotik.github.io/refs/heads/main/"
 
-is_deploy = 'home' in rootdir
+app = Flask(__name__)
 
+env_is_deploy = environ.get('DEPLOY', None)
+print(env_is_deploy)
+
+if env_is_deploy == None:
+    is_deploy = 'home' in rootdir
+else:
+    is_deploy = env_is_deploy.lower() == 'true'
+    
+is_deploy = True
 print("is deploy: ?", is_deploy)
+
+
 
 if is_deploy:
     def get_source_file(path: str, mimetype: MimeTypes, work_text_func = None):
@@ -177,9 +188,11 @@ def favicon():
     return '', 204
 
 def page_not_found():
-    return get_source_file("site/404.html", MimeTypes.HTML)
+    return get_source_file("404.html", MimeTypes.HTML)
 
 @app.errorhandler(404)
 def _page_not_found(e):
     return page_not_found()
 
+if __name__ == "__main__":
+    app.run(debug=not is_deploy)
